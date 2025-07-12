@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CRUD App Week Six</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>User Management</h1>
+    <form id="userForm">
+      <input type="text" id="name" placeholder="Enter Name" required />
+      <input type="email" id="email" placeholder="Enter Email" required />
+      <button type="submit">Add New User</button>
+    </form>
+    <ul id="userList"></ul>
+  </div>
+  <script>
+    const form = document.getElementById('userForm');
+    const userList = document.getElementById('userList');
+    const API = '/api/users';
+    async function fetchUsers() {
+      const res = await fetch(API);
+      const users = await res.json();
+      userList.innerHTML = '';
+      users.forEach(user => {
+        const li = document.createElement('li');
+        li.innerHTML = `${user.name} (${user.email}) 
+          <button onclick="deleteUser('${user._id}')">Delete</button>`;
+        userList.appendChild(li);
+      });
+    }
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      await fetch(API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email }),
+      });
+      form.reset();
+      fetchUsers();
+    });
+    async function deleteUser(id) {
+      await fetch(`${API}/${id}`, { method: 'DELETE' });
+      fetchUsers();
+    }
+    fetchUsers();
+  </script>
+</body>
+</html>
