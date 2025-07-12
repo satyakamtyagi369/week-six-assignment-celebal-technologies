@@ -11,7 +11,7 @@
     <h1>User Management</h1>
     <form id="userForm">
       <input type="text" id="name" placeholder="Enter Name" required />
-      <input type="email" id="email" placeholder="Enter Email" required />
+      <input type="text" id="products" name="products" placeholder="Enter product" required />
       <button type="submit">Add New User</button>
     </form>
     <ul id="userList"></ul>
@@ -26,7 +26,7 @@
       userList.innerHTML = '';
       users.forEach(user => {
         const li = document.createElement('li');
-        li.innerHTML = `${user.name} (${user.email}) 
+        li.innerHTML = `${user.name} (${user.products}) 
           <button onclick="deleteUser('${user._id}')">Delete</button>`;
         userList.appendChild(li);
       });
@@ -34,11 +34,15 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const name = document.getElementById('name').value;
-      const email = document.getElementById('email').value;
-      await fetch(API, {
-        method: 'POST',
+      const products = document.getElementById('products').value + '';
+      console.log("Submitting:",{name,products});
+      await fetch(API,{
+        method: 'POSt',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email }),
+        body: JSON.stringify({
+          name: String(name),
+          products: String(products)
+        }),
       });
       form.reset();
       fetchUsers();
